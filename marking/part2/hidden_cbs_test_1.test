@@ -1,0 +1,16 @@
+class: "cbsTest"
+
+searchProblemClass: "MAPFProblem"
+layout: """
+%%%%%%%%
+%     a%
+%      %
+% %%%% %
+% % AB %
+% % %%%%
+% %  b %
+%%%%%%%%
+"""
+ans: "19"
+
+
