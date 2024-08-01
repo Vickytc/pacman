@@ -151,7 +151,7 @@ Pac-Man is a classic game that has taken the world for over decades, and Pac-Man
 
 In the Pac-Man food problem, the agent (Pac-Man) starts at a specific location in a maze and must find a path to eat all the food. The difficulty of the problem lies in navigating the maze structure, avoiding dead ends, and ensuring that all food particles are eaten in the shortest possible time. This can be formalized as a search problem whose goal state is that no food particles remain.
 
-To solve the food problem efficiently, we need to design a heuristic function (for the given A*) that guides the search algorithm effectively towards the goal state. This heuristic function should estimate the cost from the current state to the goal state and help prioritize which paths the agent should explore first. A good heuristic must be both admissible and as close as possible to the optimal heuristic function as possible. 
+To solve the food problem efficiently, we need to design a heuristic function (for the given A*) that guides the search algorithm effectively towards the goal state. This heuristic function should estimate the cost from the current state to the goal state and help prioritize which paths the agent should explore first. A good heuristic must be both admissible and as close to the optimal heuristic function as possible. 
 
 
 >[!TIP] 
@@ -166,14 +166,12 @@ python pacman.py -l mediumMaze -p SearchAgent -a fn=astar,prob=FoodSearchProblem
 >[!IMPORTANT] 
 > Please do not change the arguments used above, unless you want to test a different functionality :wink:. You can explore other options via ``python pacman.py -h``. 
 
-There is a **local autograder** provided to you for gaining more insights. You may run the following command to test out our code for both tasks.
-```
-python ./autograder.py --test-directory=test_cases_assignment1
-```
+We have a local autograder to test your code locally ([Local Autograder](#local-autograder)).
+
 For task 1, the `autograder` seeks an optimal solution length within the time budget (**10 seconds**) for each test case. 
 And please be aware that total search time is influenced not only by the number of nodes expanded but also by the complexity of the heuristic function (the time required to compute it). 
 
-And the node expansion number will directly impact your result, please inspect the `autograder` for further thresholds information. In addition, please make sure your heuristic is **admissible**, otherwise you may not get full marks for this part due to not finding the optimal plan.
+And the node expansion number will directly impact your result, please inspect the result from `autograder` for further thresholds information. In addition, please make sure your heuristic is **admissible**, otherwise you may not get full marks for this part due to not finding the optimal plan.
 
 
 
@@ -247,7 +245,15 @@ Multi-agent Path-finding problem is currently a hot research topic given recent 
 
 Implement the **CBS algorithm** discussed above by inserting your code into the template indicated by comment ```*** YOUR CODE HERE FOR TASK 2 ***```, you can view the location at this link: [search.py#L127](search.py#L127). 
 
-You should be able to test your program by running the local `auto_grader` or online server grader. And we will check if the final solution is valid and optimal.
+You can visualize the path of your agent by using the following command"
+```bash
+python pacman.py -l mapfTest -p SearchAgent -a fn=cbs,prob=MAPFProblem
+```
+You can also create your own layout files in the `layouts` directory and changed the `-l` arguement in the above command.
+
+We have a local autograder to test your code locally ([Local Autograder](#local-autograder)).
+
+For task 2, `autograder` seek for the optimal solution length and soundness of your solution. 
 
 
 
@@ -284,13 +290,16 @@ If you are new to [GIT, check out this 100 seconds video summary](https://www.yo
 > **Note**
 > From this repository, we will copy *only* the files: [search.py](search.py) when testing the autograder in the server via tagging. Please do not change any other file as part of your solution, or it will not run in our server. 
 
-Run the following command to run sanity checks using our test files:
-
+### Local Autograder
+There is a **local autograder** provided to you for gaining more insights. You may run the following command to test out our code for both tasks.
 ```
 python ./autograder.py --test-directory=test_cases_assignment1
 ```
 
-It is important that you are able to run the autograder and have these tests pass, as this gives you valuable feedback about the validity of your solution.
+It is important that you are able to run the autograder and have these tests pass, as this gives you valuable feedback about the validity of your solution. However, full marks result in the local autograder does not equalivant to a full mark on the server. There might be two reasons:
+* Runability (Your code might not be able to run successfully if you have extra `import`), you can test with the docker as instructed in the following session
+* Hidden test cases. We have hidden test cases on the server, which should have similar scale as the local test, but more tricky layouts.
+
 
 > **Note**
 > We encourage you to create and share your own test cases, you can create them following a similar styles as those we provided in [test_cases_assignment1/](test_cases_assignment1/). Please feel free to share your test cases in this [ED post](https://edstem.org/au/courses/17752/discussion/2097066)
