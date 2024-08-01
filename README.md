@@ -306,7 +306,12 @@ It is important that you are able to run the autograder and have these tests pas
 
 
 ## Docker Run
-If you prefer not to set up your environment locally, you can run your code with docker. An example command for running the autograder is (please change the `bash` to `sh` if you are using a Windows PowerShell):
+If you prefer not to set up your environment locally, you can run your code with docker. First, initialise docker
+```
+bash docker/docker_init.sh
+```
+
+An example command for running the autograder is (please change the `bash` to `sh` if you are using a Windows PowerShell):
 ```
 bash ./docker/docker_runner.sh python ./autograder.py --test-directory=test_cases_assignment1
 ```
