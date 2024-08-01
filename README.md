@@ -117,7 +117,7 @@ You **must build and submit your solution** using the sample code we provide you
 #### Setting up the environment
 
 * You can set up your local environment:
-    * You can install Python 3.8 from the [official site](https://peps.python.org/pep-0569/), or set up a [Conda environment](https://www.freecodecamp.org/news/why-you-need-python-environments-and-how-to-manage-them-with-conda-85f155f4353c/) or an environment with [PIP+virtualenv](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/). 
+    * You can install Python 3.8 from the [official site](https://peps.python.org/pep-0569/), or set up a [Conda environment](https://www.freecodecamp.org/news/why-you-need-python-environments-and-how-to-manage-them-with-conda-85f155f4353c/) or an environment with [PIP+virtualenv](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/). Please check [Conda Run](#conda-run) to set up the conda environment.
     * You need to install additional package (func_timeout) using:  `pip3 install func_timeout`
 
 * Alternatively, you can use docker:
@@ -304,11 +304,20 @@ It is important that you are able to run the autograder and have these tests pas
 > **Note**
 > We encourage you to create and share your own test cases, you can create them following a similar styles as those we provided in [test_cases_assignment1/](test_cases_assignment1/). Please feel free to share your test cases in this [ED post](https://edstem.org/au/courses/17752/discussion/2097066)
 
+## Conda Run
+To set up a conda environment locally, execute this command
+```
+conda env create -f conda/environment.yml
+```
+Then, activate the environment
+```
+conda activate 2024s2a1
+```
 
 ## Docker Run
 If you prefer not to set up your environment locally, you can run your code with docker. First, initialise docker
 ```
-bash docker/docker_init.sh
+bash ./docker/docker_init.sh
 ```
 
 An example command for running the autograder is (please change the `bash` to `sh` if you are using a Windows PowerShell):
