@@ -355,7 +355,6 @@ class MAPFProblem(SearchProblem):
 
     def isGoalState(self, state):
         "Return if the state is the goal state"
-        "*** YOUR CODE HERE for task2 ***"
         return state[1].count(False) == state[1].width * state[1].height
 
         # comment the below line after you implement the function
@@ -363,7 +362,6 @@ class MAPFProblem(SearchProblem):
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
-        "*** YOUR CODE HERE for task3 ***"
         all_succs = []
         for pacman in state[0].keys():
             p_succs = []
