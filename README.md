@@ -69,7 +69,7 @@ The objective is to reflect on your own learning, and take more risks, as you ca
 Assignment 1 can be completed individually or in pairs. We encourage pairs to work together to learn from each other; not to simple split the tasks for efficiency. But we will not monitor this – it is your responsibility. You can submit different solutions, we just want to encourage collaboration.
 
 <!-- Each submission will contain an individual short self-reflection. -->
-For the student works in pair, you must submit an individual short self evaluation ([SELFEV.md](SELFEV.md)). In addition, you can either submit the same coding solution (both need to submit in their own repo using tag), or submit different coding solution. 
+For the student works in pair, you must submit an individual self evaluation. In addition, you can either submit the same coding solution (both need to submit in their own repo using tag), or submit different coding solution. 
 
 We encourage students to derive their own tests and share them with others to help with learning. 
 
@@ -100,13 +100,11 @@ Your task contains programming excercises with increasing difficulty. This is wh
 
 You **must build and submit your solution** using the sample code we provide you in this repository, which is different from the original [UC Berkley code base](https://inst.eecs.berkeley.edu/~cs188/fa18/project1.html). 
 
-* Please remember to complete the [SELFEV.md](SELFEV.md) file with your individual submission details (so we can identify you when it comes time to submit). 
-
 * You should **only work and modify** file [search.py](search.py) in doing your solution. Do not change the other Python files in this distribution.
 
 * Your code **must run _error-free_ on Python 3.8**. Staff will not debug/fix any code. Using a different version will risk your program not running with the Pacman infrastructure or autograder. 
 
-* Your code **must not have any personal information**, like your student number or your name. That info should go in the [SELFEV.md](SELFEV.md) file, as per instructions above. If you use an IDE that inserts your name, student number, or username, you should disable that.
+* Your code **must not have any personal information**, like your student number or your name. If you use an IDE that inserts your name, student number, or username, you should disable that.
 
 * **Assignment 1 FAQ** is available to answer common questions you might have about [Assignment 1 on ED](https://edstem.org/au/courses/17752/discussion/2097057)
 
@@ -264,13 +262,12 @@ At the end, it is recommended to look at all the learning journey you had across
 
 You need to assign your marks for part 1 (3 marks), part 2 (4 marks) based on your code performance due to your programming, and learning experiences. Consider aspects such as coding lessons/challenges, heuristic properties, search algorithms subtleties, what would you have done if you were to have more time, etc.
 
-Please fill in the self-evaluation section of the [SELFEV.md](SELFEV.md). 
 
 
 ## Marking criteria
 
 <!-- Marks are allocated according to the task breakdown listed above, based on how many of our tests the algorithms pass. No marks will be given for code formatting, etc.  -->
-Marks are given based on both your code performance and your self evaluation. We are going to review your self evaluation and give you feedback about it, but we won't focus on the marks, rather on your qualitative evaluation reported in SELFEV.md.
+Marks are given based on both your code performance and your self evaluation. We are going to review your self evaluation and give you feedback about it, but we won't focus on the marks, rather on your qualitative evaluation.
  
 You must **follow good SE practices**, including good use of git during your development such as:
 
@@ -343,7 +340,7 @@ This repository serves as a start code for you to carry out your solution for [P
     * Note that a tag is **NOT** a branch, so do not just create a branch called "submission" as that will not amount to tagging.
     * Note that a tag is **NOT** a commit message, so please make sure you can find it in your repo page -> tags
     * It is **case-sensitive**.
-3. Complete the [SELFEV.md](SELFEV.md) file with your details of the submission. **Please make sure you commit your self-evaluation to the master/main branch.**
+3. Complete the a self-evaluation of your work and submit to [Canvas -> Assignments ->  (Assignment1)](https://canvas.lms.unimelb.edu.au/courses/187356/assignments/503612). You can use [SELFEV.md](SELFEV.md) as a template or guide for your self evaluation.
 4. **Make sure you fill in the [submission certification form](https://forms.gle/7pmkWyHw2t1RB4yN9)**.
 <!-- 4. Fill the [Assignment 1 Certification Form](https://forms.gle/3W8ntjbW6Qq6NMvZA). -->
 
@@ -379,7 +376,7 @@ Please view the following to learn how to *Tag* your commit version you want to 
 
 > **_Please do not distribute or post solutions to any of the projects._**
 
-**Academic Dishonesty:** This is an advanced course, so we expect full professionalism and ethical conduct.  Plagiarism is a serious issue. Please **don't let us down and risk our trust**. The staff take academic misconduct very seriously. Sophisticated _plagiarism detection_ software (e.g., [Codequiry](https://codequiry.com/), [Turinitin](https://www.turnitin.com/), etc.) will be used to check your code against other submissions in the class as well as resources available on the web for logical redundancy. These systems are really smart, so just do not risk it and keep professional. We trust you all to submit your own work only; please don't let us down.  If you do, we will pursue the strongest consequences available to us according to the **University Academic Integrity policy**. If you collaborate with other students, or use other materials, make sure to acknowledge it in the SELFEV.md document. For more information on this see file [Academic Integrity](ACADEMIC_INTEGRITY.md).
+**Academic Dishonesty:** This is an advanced course, so we expect full professionalism and ethical conduct.  Plagiarism is a serious issue. Please **don't let us down and risk our trust**. The staff take academic misconduct very seriously. Sophisticated _plagiarism detection_ software (e.g., [Codequiry](https://codequiry.com/), [Turinitin](https://www.turnitin.com/), etc.) will be used to check your code against other submissions in the class as well as resources available on the web for logical redundancy. These systems are really smart, so just do not risk it and keep professional. We trust you all to submit your own work only; please don't let us down.  If you do, we will pursue the strongest consequences available to us according to the **University Academic Integrity policy**. If you collaborate with other students, or use other materials, make sure to **acknowledge it in your self evaluation**. For more information on this see file [Academic Integrity](ACADEMIC_INTEGRITY.md).
 
 **We are here to help!:** We are here to help you! But we don't know you need help unless you tell us. We expect reasonable effort from you side, but if you get stuck or have doubts, please seek help. We will ran labs to support these projects, so use them! You can always ask general questions about the techniques that are required to solve the projects. If in doubt whether a questions is appropriate, post a Private post to the instructors.
 
