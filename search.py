@@ -75,6 +75,17 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     util.raiseNotDefined()
 
+from searchProblems import FoodSearchProblem
+class MyFoodSearchProblem(FoodSearchProblem):
+    def __init__(self, position, food, walls):
+        self.start = (position, food)
+        self.walls = walls
+        self.heuristicInfo = {}
+        self._expanded = 0
+
+    def getStartState(self):
+        return self.start
+
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -104,7 +115,38 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     "*** YOUR CODE HERE for TASK1 ***"
-    util.raiseNotDefined()
+    pacmanPosition, foodGrid = state
+    foodList = foodGrid.asList()
+    maxDistance = 0
+
+    if foodList == []:
+        return 0
+    else:
+        for i in range(len(foodList)):
+            for j in range(len(foodList)):
+                # calculate every pair's distance
+                currentDistance = getDistanceBetweenTwoPos(foodList[i], foodList[j], problem)
+                if currentDistance > maxDistance:
+                    maxDistance = currentDistance
+                    furthest = (foodList[i], foodList[j])
+
+        distance_to_furthest = []
+        for food in furthest:
+            distance_to_furthest.append(getDistanceBetweenTwoPos(pacmanPosition, food, problem))
+        min_distance_to_furthest = min(distance_to_furthest)
+        res = maxDistance + min_distance_to_furthest
+    return res
+
+def getDistanceBetweenTwoPos(position, food, problem):
+    try:
+        return problem.heuristicInfo[(position, food)]
+    except:
+        foodGrid = Grid(problem.walls.width, problem.walls.height, False)
+        foodGrid[food[0]][food[1]] = True
+        prob = MyFoodSearchProblem(position, foodGrid, problem.walls)
+        problem.heuristicInfo[(position,food)] = len(astar(prob))
+        return len(astar(prob))
+
 
 from searchProblems import MAPFProblem
 def conflictBasedSearch(problem: MAPFProblem):
