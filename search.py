@@ -23,10 +23,27 @@ from searchProblems import nullHeuristic,PositionSearchProblem,ConstrainedAstarP
 
 ### You might need to use
 from copy import deepcopy
-
+import collections
+from searchProblems import FoodSearchProblem
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    util.raiseNotDefined()
+    queue = collections.deque()
+    startState = problem.getStartState()
+    queue.append((startState, []))
+    visited = set()
+
+    while queue:
+        state, path = queue.popleft()
+        if state in visited:
+            continue
+        visited.add(state)
+        if problem.isGoalState(state):
+            return path
+        for succState, succAction, succCost in problem.getSuccessors(state):
+            if succState not in visited:
+                queue.append((succState, path + [succAction]))
+    return None # Goal not found
+    # util.raiseNotDefined()
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
@@ -52,7 +69,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     return None  # Goal not found
 
 
-
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -67,15 +83,52 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
+    stack = [(problem.getStartState(), [], 0)]  # Stack holds (state, path, cost)
+    visited = set()
+    while stack:
+        state, path, cost = stack.pop()
+        if state in visited:
+            continue
+        visited.add(state)
+        if problem.isGoalState(state):
+            return path
+        for succState, succAction, succCost in problem.getSuccessors(state):
+            if succState not in visited:
+                stack.append((succState, path + [succAction], cost + succCost))
 
-    util.raiseNotDefined()
+    return None # Goal not found
 
+    # util.raiseNotDefined()
+
+
+def dijkstraSearch(problem):
+    """Search the node with the lowest cost first (Dijkstra's Algorithm)."""
+    myPQ = util.PriorityQueue()
+    startState = problem.getStartState()
+    startNode = (startState, 0, [])
+    myPQ.push(startNode, 0)  # No heuristic, only actual cost
+    best_g = dict()
+
+    while not myPQ.isEmpty():
+        node = myPQ.pop()
+        state, cost, path = node
+        if (not state in best_g) or (cost < best_g[state]):
+            best_g[state] = cost
+            if problem.isGoalState(state):
+                return path
+            for succ in problem.getSuccessors(state):
+                succState, succAction, succCost = succ
+                new_cost = cost + succCost
+                newNode = (succState, new_cost, path + [succAction])
+                myPQ.push(newNode, new_cost)  # No heuristic component
+
+    return None
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     util.raiseNotDefined()
 
-from searchProblems import FoodSearchProblem
+
 class MyFoodSearchProblem(FoodSearchProblem):
     def __init__(self, position, food, walls):
         self.start = (position, food)
@@ -124,9 +177,10 @@ def foodHeuristic(state, problem):
     else:
         for i in range(len(foodList)):
             for j in range(len(foodList)):
-                # calculate every pair's distance
+                # calculate every pair's distance with getDistanceBetweenTwoPos
                 currentDistance = getDistanceBetweenTwoPos(foodList[i], foodList[j], problem)
                 if currentDistance > maxDistance:
+                    # find the furrest food and calculate its distance between original position
                     maxDistance = currentDistance
                     furthest = (foodList[i], foodList[j])
 
@@ -138,15 +192,22 @@ def foodHeuristic(state, problem):
     return res
 
 def getDistanceBetweenTwoPos(position, food, problem):
+    # Here I tried different search algorithm like bfs, dfs, dijkstra and Astar
     try:
         return problem.heuristicInfo[(position, food)]
     except:
         foodGrid = Grid(problem.walls.width, problem.walls.height, False)
         foodGrid[food[0]][food[1]] = True
         prob = MyFoodSearchProblem(position, foodGrid, problem.walls)
-        problem.heuristicInfo[(position,food)] = len(astar(prob))
-        return len(astar(prob))
+        # problem.heuristicInfo[(position,food)] = len(astar(prob))
+        # problem.heuristicInfo[(position, food)] = len(dijkstra(prob))
+        problem.heuristicInfo[(position, food)] = len(bfs(prob))
+        # problem.heuristicInfo[(position, food)] = len(dfs(prob))
 
+        # return len(astar(prob))  # 442
+        # return len(dijkstra(prob))  #442
+        return len(bfs(prob)) # 442
+        # return len(dfs(prob))   # 380
 
 from searchProblems import MAPFProblem
 def conflictBasedSearch(problem: MAPFProblem):
@@ -178,3 +239,4 @@ dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
 cbs = conflictBasedSearch
+dijkstra = dijkstraSearch
