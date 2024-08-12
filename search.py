@@ -79,8 +79,8 @@ from searchProblems import FoodSearchProblem
 class MyFoodSearchProblem(FoodSearchProblem):
     def __init__(self, position, food, walls):
         self.start = (position, food)
-        self.walls = walls
         self.heuristicInfo = {}
+        self.walls = walls
         self._expanded = 0
 
     def getStartState(self):
