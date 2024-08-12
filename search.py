@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import itertools
 from game import Grid
 from searchProblems import nullHeuristic,PositionSearchProblem,ConstrainedAstarProblem
 
@@ -172,6 +173,22 @@ def foodHeuristic(state, problem):
     foodList = foodGrid.asList()
     maxDistance = 0
 
+# This function cost 719
+#     minDistance =float('inf')
+#     if not foodList:
+#         return 0
+#     for food in foodList:
+#         distanceToPacman = getDistanceBetweenTwoPos(pacmanPosition, food, problem)
+#         if distanceToPacman < minDistance:
+#             minDistance = distanceToPacman
+#         for otherFood in foodList:
+#             if food != otherFood:
+#                 currentDistance = getDistanceBetweenTwoPos(food, otherFood, problem)
+#                 if currentDistance > maxDistance:
+#                     maxDistance = currentDistance
+#     return  minDistance + maxDistance
+
+    # This function cost 376
     if foodList == []:
         return 0
     else:
@@ -199,17 +216,20 @@ def getDistanceBetweenTwoPos(position, food, problem):
         foodGrid = Grid(problem.walls.width, problem.walls.height, False)
         foodGrid[food[0]][food[1]] = True
         prob = MyFoodSearchProblem(position, foodGrid, problem.walls)
-        # problem.heuristicInfo[(position,food)] = len(astar(prob))
+        problem.heuristicInfo[(position,food)] = len(astar(prob))
         # problem.heuristicInfo[(position, food)] = len(dijkstra(prob))
-        problem.heuristicInfo[(position, food)] = len(bfs(prob))
+        # problem.heuristicInfo[(position, food)] = len(bfs(prob))
         # problem.heuristicInfo[(position, food)] = len(dfs(prob))
 
-        # return len(astar(prob))  # 442
-        # return len(dijkstra(prob))  #442
-        return len(bfs(prob)) # 442
-        # return len(dfs(prob))   # 380
+        return len(astar(prob))  # 442   376
+        # return len(dijkstra(prob))  #442   376
+        # return len(bfs(prob)) # 442    376
+        # return len(dfs(prob))   # 380    1419
+
 
 from searchProblems import MAPFProblem
+
+
 def conflictBasedSearch(problem: MAPFProblem):
     """
         Conflict-based search algorithm.
@@ -219,7 +239,7 @@ def conflictBasedSearch(problem: MAPFProblem):
         A search state in this problem is a tuple ( pacmanPosition, foodGrid ) where
           pacmanPosition: a tuple (x,y) of integers specifying Pacman's position
           foodGrid:       a Grid (see game.py) of either True or False, specifying remaining food
-        
+
         Hints:
             You should model the constrained Astar problem as a food search problem instead of a position search problem,
             you can use: ConstrainedAstarProblem
@@ -228,9 +248,206 @@ def conflictBasedSearch(problem: MAPFProblem):
 
     """
     "*** YOUR CODE HERE for TASK2 ***"
-    pacman_positions, food_grid = problem.getStartState()
+    def initialize_root():
+        pacman_positions, food_grid = problem.getStartState()
+        agentList = list(pacman_positions.keys())
+        root = {
+            'constraints': {},
+            'path': {},
+            'solution': {},
+            'cost': 0
+        }
+        for agent in agentList:
+            astar_cbs = AStarSearchCBS(problem, agent, root['constraints'])
+            path, solution = astar_cbs.run_search()
+            root['path'][agent] = path
+            root['solution'][agent] = solution
+        root['cost'] = sum(len(path) for path in root['solution'].values())
+        return root
 
-    util.raiseNotDefined()
+    def process_conflict(node, conflict):
+        conflictPacmans = conflict['pacmans']
+        conflictPosition = conflict['position']
+        conflictTime = conflict['time']
+        new_nodes = []
+        for pacman in conflictPacmans:
+            new_constraints = node['constraints'].copy()
+            if not conflict['swap']:
+                new_constraints[(pacman, conflictPosition, conflictTime, False)] = conflictTime
+            else:
+                new_constraints[(pacman, conflictPosition[pacman], conflictTime, True)] = conflictTime
+
+            new_node = {
+                'constraints': new_constraints,
+                'path': node['path'].copy(),
+                'solution': node['solution'].copy(),
+                'cost': 0
+            }
+            max_length = max(len(sol) for sol in new_node['solution'].values())
+            astar_cbs1 = AStarSearchCBS(problem, pacman, new_constraints, goalTime=max_length)
+            new_solution = astar_cbs1.run_search()
+            if new_solution:
+                path, solution = new_solution
+                new_node['path'][pacman] = path
+                new_node['solution'][pacman] = solution
+                new_node['cost'] = sum(len(sol) for sol in new_node['solution'].values())
+                new_nodes.append(new_node)
+        return new_nodes
+
+    root = initialize_root()
+    OPEN = util.PriorityQueue()
+    OPEN.push(root, root['cost'])
+
+    while not OPEN.isEmpty():
+        node = OPEN.pop()
+        detector = ConflictDetector(node['path'])
+        conflict = detector.detect_conflict()
+
+        if not conflict:
+            print("final solution:", node['solution'])
+            print("final path:", node['path'])
+            return node['solution']
+
+        new_nodes = process_conflict(node, conflict)
+        for new_node in new_nodes:
+            OPEN.push(new_node, new_node['cost'])
+
+    return None
+
+class AStarSearchCBS:
+    def __init__(self, problem, agent, constraints, goalTime=-1, heuristic=foodHeuristic):
+        self.problem = problem
+        self.agent = agent
+        self.constraints = constraints
+        self.goalTime = goalTime
+        self.heuristic = heuristic
+        self.visited = set()
+        self.myPQ = util.PriorityQueue()
+        self.startState = self.problem.getStartState()
+        self.goalState = self.find_goal_state()
+
+    def find_goal_state(self):
+        foodGrid = self.startState[1]
+        for x in range(foodGrid.width):
+            for y in range(foodGrid.height):
+                if foodGrid[x][y] == self.agent:
+                    return (x, y)
+        return None
+
+    def run_search(self):
+        startPosition = self.startState[0][self.agent]
+        startNode = (self.startState, 0, [startPosition], [], 0)
+        self.myPQ.push(startNode, 0)
+
+        while not self.myPQ.isEmpty():
+            currentNode = self.myPQ.pop()
+            if self.process_current_node(currentNode):
+                return currentNode[2], currentNode[3]
+        return None, None
+
+    def process_current_node(self, currentNode):
+        currentState, currentCost, currentPath, currentSolution, currentTime = currentNode
+        currentPosition = currentState[0][self.agent]
+
+        if (currentPosition, currentTime) in self.visited:
+            return False
+
+        self.visited.add((currentPosition, currentTime))
+
+        if self.goalState in currentPath:
+            if self.goalTime == -1 or self.can_early_stop(currentPosition, currentTime):
+                return True
+
+        self.expand_successors(currentNode)
+        return False
+
+    def can_early_stop(self, currentPosition, currentTime):
+        for key, _ in self.constraints.items():
+            _, constraintsPos, constraintsTime, isSwap = key
+            if constraintsTime > currentTime:
+                if (isSwap and currentPosition in constraintsPos) or (not isSwap and currentPosition == constraintsPos):
+                    return False
+        return True
+
+    def expand_successors(self, currentNode):
+        currentState, currentCost, currentPath, currentSolution, currentTime = currentNode
+
+        for nextState, action, stepCost in self.problem.getSuccessors(currentState):
+            nextPosition = nextState[0][self.agent]
+            if self.is_constrained(currentPosition=currentState[0][self.agent], nextPosition=nextPosition, currentTime=currentTime):
+                continue
+
+            newCost = currentCost + stepCost
+            newPath = currentPath + [nextPosition]
+            newSolution = currentSolution + [action[self.agent]]
+            newTime = currentTime + 1
+            heuristicCost = util.manhattanDistance(nextPosition, self.goalState)
+            totalCost = newCost + heuristicCost
+            newNode = (nextState, newCost, newPath, newSolution, newTime)
+            self.myPQ.push(newNode, totalCost)
+
+    def is_constrained(self, currentPosition, nextPosition, currentTime):
+        return ((self.agent, nextPosition, currentTime + 1, False) in self.constraints.keys() or
+                (self.agent, (currentPosition, nextPosition), currentTime + 1, True) in self.constraints.keys())
+
+
+
+class ConflictDetector:
+    def __init__(self, paths):
+        self.paths = paths
+        self.max_length = max(len(path) for path in paths.values())
+
+    def detect_conflict(self):
+        for t in range(self.max_length):
+            all_positions = self.get_all_positions_at_time(t)
+            conflict = self.check_vertex_conflict(all_positions, t)
+            if conflict:
+                return conflict
+            conflict = self.check_swap_conflict(all_positions, t)
+            if conflict:
+                return conflict
+        return {}
+
+    def get_all_positions_at_time(self, t):
+        return {
+            agent: (path[t] if t < len(path) else path[-1])
+            for agent, path in self.paths.items()
+        }
+
+    # check vertext conflict
+    def check_vertex_conflict(self, positions, time):
+        seen_positions = {}
+        for agent, pos in positions.items():
+            if pos in seen_positions:
+                return {
+                    'pacmans': [seen_positions[pos], agent],
+                    'position': pos,
+                    'time': time,
+                    'swap': False
+                }
+            seen_positions[pos] = agent
+        return None
+
+    # check swap conflict
+    def check_swap_conflict(self, positions, time):
+        for pacA, posA in positions.items():
+            for pacB, posB in positions.items():
+                if pacA != pacB:
+                    past_posA = self.get_past_position(pacA, time)
+                    past_posB = self.get_past_position(pacB, time)
+                    if posA == past_posB and posB == past_posA:
+                        return {
+                            'pacmans': [pacA, pacB],
+                            'position': {pacA: (past_posA, posA), pacB: (past_posB, posB)},
+                            'time': time,
+                            'swap': True
+                        }
+        return None
+
+    def get_past_position(self, agent, time):
+        if time > 0:
+            return self.paths[agent][time - 1] if time <= len(self.paths[agent]) else self.paths[agent][-1]
+        return self.paths[agent][0]
 
 
 # Abbreviations
